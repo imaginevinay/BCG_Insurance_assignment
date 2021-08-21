@@ -19,6 +19,7 @@ const db = mongoose.connection;
 db.on('error', err => console.log(error))
 db.once('open', () => console.log("connected to mongoose"));
 
+app.use(requireHTTPS);
 
 // Morgan unique token generation for every request
 morgan.token('id', function getID(req) { return req.id })
@@ -42,19 +43,19 @@ app.use((req, res, next) => {
     next();
 });
 
-// sending client folder for deployement on base route
-if(process.env.NODE_ENV === 'production') {
-    // serve build  from client folder
-    app.use(express.static('client/build'));
-    app.get('*', (req,res) => {
-        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
-    });
-}
-
 // Routes middleware
 // app.use('/', baseRoute);
 app.use('/policy', policyRoute);
 app.use('/customer', customerRoute);
+
+// sending client folder for deployement on base route
+if(process.env.NODE_ENV === 'production') {
+    // serve build  from client folder
+    app.use(express.static('./client/build'));
+    app.get('/*', (req,res) => {
+        res.sendFile(('index.html', {root: 'client/build/'}))
+    });
+}
 
 
 // Error Handling for not found Routes
@@ -76,5 +77,15 @@ app.listen(process.env.PORT || 3000);
 // function to generate unique ID
 function assignID(req, res, next) {
     req.id = uuidv4();
+    next();
+}
+
+// require https : 
+  
+function requireHTTPS(req, res, next) {
+    // The 'x-forwarded-proto' check is for Heroku
+    if (!req.secure && req.get('x-forwarded-proto') !== 'https') {
+        return res.redirect('https://' + req.get('host') + req.url);
+    }
     next();
 }
