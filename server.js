@@ -19,7 +19,9 @@ const db = mongoose.connection;
 db.on('error', err => console.log(error))
 db.once('open', () => console.log("connected to mongoose"));
 
-app.use(requireHTTPS);
+if(process.env.NODE_ENV === 'production') {
+    app.use(requireHTTPS);
+}
 
 // Morgan unique token generation for every request
 morgan.token('id', function getID(req) { return req.id })
