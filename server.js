@@ -9,7 +9,7 @@ const morgan = require('morgan');
 const { v4: uuidv4 } = require('uuid')
 const fs = require('fs');
 const path = require('path');
-const baseRoute = require('./routes/index');
+// const baseRoute = require('./routes/index');
 const policyRoute = require('./routes/policies');
 const customerRoute = require('./routes/customer');
 
@@ -43,7 +43,7 @@ app.use((req, res, next) => {
 });
 
 // Routes middleware
-app.use('/', baseRoute);
+// app.use('/', baseRoute);
 app.use('/policy', policyRoute);
 app.use('/customer', customerRoute);
 
