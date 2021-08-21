@@ -20,7 +20,7 @@ const routes: Routes = [
   },
   {
     path : '**',
-    component : PageNotFoundComponent
+    pathMatch: 'full', redirectTo: 'dashboard'
   },
 
 ];
